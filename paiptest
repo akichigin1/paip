@@ -125,7 +125,7 @@ Standart login
     Click Element    locator=//div[@class="gas-button" and text()=" Подтвердить "]
     Sleep    time_=3s
     Click Element    locator=//div[text()=" Кандидаты "]
-    Sleep    time_=2s
+    Sleep    time_=3s
     Click Element    locator=//div[@class="g-tab-label__title" and text()="Избирательные объединения"]
     Sleep    time_=2s
     Click Element    locator=//app-election-association-table//table//tbody//tr//td[7]/div
@@ -200,11 +200,12 @@ Standart login
     Sleep    time_=1s
     Click Element    locator=//div[@class="gas-button" and text()=" Удалить "]
     Sleep    time_=3s
-
-
-
-    
-    
+    Click Element    locator=//div[text()=" Формирование классификатора ИК "]    
+    Sleep    time_=2s
+    Click Element    locator=//div[text()=" Подтвердить "]
+    Sleep    time_=5s
+    Close Browser
+ 
 *** Keywords ***
 Precondition: Open Browser
     [Documentation]    Открыть : Браузер на весь экран
