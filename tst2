@@ -1,0 +1,234 @@
+{
+	"info": {
+		"_postman_id": "5ee43c5d-3354-4c15-959f-fe4dc097efaf",
+		"name": "PDM1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32243476",
+		"_collection_link": "https://solar-escape-170766.postman.co/workspace/My-Workspace~dd725a58-aa3c-4c39-864e-d16a86a4904f/collection/32243476-5ee43c5d-3354-4c15-959f-fe4dc097efaf?action=share&source=collection_link&creator=32243476"
+	},
+	"item": [
+		{
+			"name": "getmodels",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Проверка статус кода\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Проверка наличия строки \"dectForDemos\" в теле ответа\r",
+							"pm.test(\"Response body contains 'dectForDemos'\", () => {\r",
+							"  pm.expect(pm.response.text()).to.include(\"dectForDemos\");\r",
+							"});\r",
+							"\r",
+							"// Проверка статуса у объекта dectfofdemos\r",
+							"pm.test(\"Check if object with 'dectForDemos' has 'status': 'ACTIVE'\", () => {\r",
+							"  const responseJson = pm.response.json(); \r",
+							"  });\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Pre-request Script (для получения id из ответа первого запроса)\r",
+							"pm.sendRequest({\r",
+							"    url: 'https://pdm.apps.dev.devsun.ru/service/mdm-service/dictionarymodel/all?sortDirection=ASC', \r",
+							"    method: 'GET', // или другой метод, если необходимо\r",
+							"}, function (err, response) {\r",
+							"    if (err) {\r",
+							"        console.log(err);\r",
+							"    } else {\r",
+							"        const responseJson = response.json();\r",
+							"\r",
+							"        // Функция для поиска объекта с \"dectForDemos\" и возврата его ID\r",
+							"        function findId(data) {\r",
+							"            if (Array.isArray(data)) {\r",
+							"                for (const item of data) {\r",
+							"                    if (typeof item === 'object' && item !== null) {\r",
+							"                        if (item.code === \"dectForDemos\" && item.id) { //Проверка если dectForDemos - значение поля code и есть ID\r",
+							"                            return item.id;\r",
+							"                        }\r",
+							"                        const nestedResult = findId(Object.values(item)); // Рекурсивный вызов для вложенных объектов и массивов\r",
+							"                        if (nestedResult) return nestedResult;\r",
+							"                    }\r",
+							"                }\r",
+							"            } else if (typeof data === 'object' && data !== null) {\r",
+							"                if (data.code === \"dectForDemos\" && data.id) { //Проверка если dectForDemos - значение поля code и есть ID\r",
+							"                    return data.id;\r",
+							"                }\r",
+							"                const nestedResult = findId(Object.values(data)); // Рекурсивный вызов для вложенных объектов и массивов\r",
+							"                if (nestedResult) return nestedResult;\r",
+							"            }\r",
+							"            return null; // Объект с \"dectForDemos\" не найден или ID не найден\r",
+							"        }\r",
+							"\r",
+							"        const dectForDemosId = findId(responseJson);\r",
+							"\r",
+							"        if (dectForDemosId) {\r",
+							"            // Сохраняем ID в переменной окружения (или глобальной переменной)\r",
+							"            pm.environment.set(\"dectForDemosId\", dectForDemosId);\r",
+							"            console.log(\"ID объекта dectForDemos: \" + dectForDemosId);\r",
+							"        } else {\r",
+							"            console.log(\"Объект dectForDemos не найден или не имеет ID\");\r",
+							"        }\r",
+							"    }\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://pdm.apps.dev.devsun.ru/service/mdm-service/dictionarymodel/all?sortDirection=ASC",
+					"protocol": "https",
+					"host": [
+						"pdm",
+						"apps",
+						"dev",
+						"devsun",
+						"ru"
+					],
+					"path": [
+						"service",
+						"mdm-service",
+						"dictionarymodel",
+						"all"
+					],
+					"query": [
+						{
+							"key": "sortDirection",
+							"value": "ASC"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getactive",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check 'name' attribute contains 'Справочник ТОЛЬКО для демо (Автомобили)'\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"\r",
+							"    // Предполагаем, что response - это JSON object\r",
+							"    // И свойство \"name\" находится непосредственно в этом объекте\r",
+							"    if (jsonData.hasOwnProperty(\"name\")) {\r",
+							"        pm.expect(jsonData.name).to.include(\"Справочник ТОЛЬКО для демо (Автомобили)\");\r",
+							"    } else {\r",
+							"        // Если свойство \"name\" не найдено, сообщаем об ошибке\r",
+							"        pm.expect.fail(\"Attribute 'name' not found in response body.\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check 'description' attribute contains the expected text\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"\r",
+							"    // Проверяем, что атрибут 'description' существует и содержит ожидаемый текст\r",
+							"    if (jsonData.hasOwnProperty(\"description\")) {\r",
+							"        pm.expect(jsonData.description).to.include(\"В данном справочнике будут добавляться атрибуты для демонстрации по мере их добавления и доработки\");\r",
+							"    } else {\r",
+							"        pm.expect.fail(\"Attribute 'description' not found in response body.\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check 'type' attribute is 'SIMPLE'\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"\r",
+							"    // Проверяем, что атрибут 'type' существует и равен 'SIMPLE'\r",
+							"    if (jsonData.hasOwnProperty(\"type\")) {\r",
+							"        pm.expect(jsonData.type).to.eql(\"SIMPLE\");\r",
+							"    } else {\r",
+							"        pm.expect.fail(\"Attribute 'type' not found in response body.\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"// Проверка статус кода\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://pdm.apps.dev.devsun.ru/service/mdm-service/dictionarymodel/{{dectForDemosId}}",
+					"protocol": "https",
+					"host": [
+						"pdm",
+						"apps",
+						"dev",
+						"devsun",
+						"ru"
+					],
+					"path": [
+						"service",
+						"mdm-service",
+						"dictionarymodel",
+						"{{dectForDemosId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get2",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://pdm.apps.dev.devsun.ru/service/mdm-service/dictionarymodel/5a9579c4-733d-4657-8704-880289aa5ab4",
+					"protocol": "https",
+					"host": [
+						"pdm",
+						"apps",
+						"dev",
+						"devsun",
+						"ru"
+					],
+					"path": [
+						"service",
+						"mdm-service",
+						"dictionarymodel",
+						"5a9579c4-733d-4657-8704-880289aa5ab4"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
