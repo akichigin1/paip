@@ -15,7 +15,7 @@
 					"script": {
 						"exec": [
 							"// Проверка статус кода\r",
-							"pm.test(\"Status code is 200\", () => {\r",
+							"pm.test(\"Проверка статус кода 200\", () => {\r",
 							"    pm.response.to.have.status(200);\r",
 							"});\r",
 							"\r",
